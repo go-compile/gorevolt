@@ -3,6 +3,7 @@ package gorevolt
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -57,16 +58,16 @@ func New(token string) *Client {
 	return c
 }
 
-// RegisterHandler will setup a listener for your specified event.
+// Register will setup a listener for your handler.
 //
 // Multiple handlers can be registered for the same event and
 // be called concurrently.
-func (c *Client) RegisterHandler(callback interface{}) {
+func (c *Client) Register(handler interface{}) {
 	c.m.Lock()
 	defer c.m.Unlock()
 
-	switch h := callback.(type) {
-	case HandlerReady:
+	switch h := handler.(type) {
+	case func(startup time.Duration):
 		c.handlers.ready = append(c.handlers.ready, h)
 	default:
 		panic("unknown handler")
@@ -100,6 +101,10 @@ func (c *Client) Connect() error {
 	}
 
 	c.ws = conn
+
+	if err := c.prepare(conn); err != nil {
+		return err
+	}
 
 	// go handle events
 	go c.eventLoop(conn)
@@ -136,6 +141,28 @@ func (c *Client) authenticate(conn *websocket.Conn) error {
 	return nil
 }
 
+func (c *Client) prepare(conn *websocket.Conn) error {
+	_, buf, err := conn.ReadMessage()
+	if err != nil {
+		return err
+	}
+
+	var event Ready
+	err = jsoniter.Unmarshal(buf, &event)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(event)
+
+	// Execute ready handler
+	for _, handler := range c.handlers.ready {
+		go handler(time.Since(c.created))
+	}
+
+	return nil
+}
+
 func (c *Client) eventLoop(conn *websocket.Conn) {
 	for {
 		_, buf, err := conn.ReadMessage()
@@ -144,6 +171,35 @@ func (c *Client) eventLoop(conn *websocket.Conn) {
 			return
 		}
 
-		fmt.Println(string(buf))
+		// decode header and find out event type
+		var eventHeader responseHeader
+		err = jsoniter.Unmarshal(buf, &eventHeader)
+		if err != nil {
+			// TODO: write to internal logger
+			return
+		}
+
+		c.parseEvents(buf, eventHeader)
 	}
+}
+
+func (c *Client) parseEvents(buf []byte, header responseHeader) {
+	switch header.Type {
+
+	case "Error":
+		log.Printf("[WS:ERROR] %s\n", string(buf))
+	case "Pong":
+		// for now ignore
+	case "Message":
+		var msg Message
+		err := jsoniter.Unmarshal(buf, &msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		fmt.Println(msg)
+	}
+
+	fmt.Println(string(buf))
 }
