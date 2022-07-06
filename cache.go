@@ -6,6 +6,7 @@ type Cache interface {
 	GetUser(id string) *User
 	PutUser(user *User)
 	GetServer(id string) *Server
+	ListServers() []*Server
 	PutServer(server *Server)
 	GetChannel(id string) *Channel
 	PutChannel(channel *Channel)
@@ -82,6 +83,10 @@ func (c *ArrayCache) PutUser(u *User) {
 	}
 
 	c.users = append(c.users, u)
+}
+
+func (c *ArrayCache) ListServers() []*Server {
+	return c.servers
 }
 
 func (c *ArrayCache) PutServer(s *Server) {

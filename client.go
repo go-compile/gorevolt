@@ -43,10 +43,12 @@ type Client struct {
 }
 
 type handlers struct {
-	ready []HandlerReady
+	ready   []HandlerReady
+	message []HandlerMessage
 }
 
 type HandlerReady func(c *Client, startup time.Duration)
+type HandlerMessage func(c *Client, m *Message)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -72,6 +74,8 @@ func (c *Client) Register(handler interface{}) {
 	switch h := handler.(type) {
 	case func(*Client, time.Duration):
 		c.handlers.ready = append(c.handlers.ready, h)
+	case func(*Client, *Message):
+		c.handlers.message = append(c.handlers.message, h)
 	default:
 		panic("unknown handler")
 	}
@@ -167,7 +171,6 @@ func (c *Client) prepare(conn *websocket.Conn) error {
 		return err
 	}
 
-	fmt.Println(event)
 	for i := range event.Users {
 		// First user is the current user
 		if i == 0 {
@@ -185,6 +188,10 @@ func (c *Client) prepare(conn *websocket.Conn) error {
 		c.cache.PutChannel(event.Channels[i])
 	}
 
+	if err = initialiseUserCache(c); err != nil {
+		return err
+	}
+
 	// Execute ready handler
 	for _, handler := range c.handlers.ready {
 		go handler(c, time.Since(c.created))
@@ -195,6 +202,7 @@ func (c *Client) prepare(conn *websocket.Conn) error {
 
 func (c *Client) eventLoop(conn *websocket.Conn) {
 	for {
+		// TODO: send ping events
 		_, buf, err := conn.ReadMessage()
 		if err != nil {
 			// TODO: write to internal logger
@@ -221,14 +229,14 @@ func (c *Client) parseEvents(buf []byte, header responseHeader) {
 	case "Pong":
 		// for now ignore
 	case "Message":
-		var msg Message
+		var msg message
 		err := jsoniter.Unmarshal(buf, &msg)
 		if err != nil {
 			log.Println(err)
 			return
 		}
 
-		fmt.Println(msg)
+		c.handleMessage(&msg)
 	}
 
 	fmt.Println(string(buf))

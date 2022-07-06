@@ -66,11 +66,35 @@ type User struct {
 	Flags        []int32 `json:"flags"`
 }
 
+type Member struct {
+	ID struct {
+		Server string `json:"server"`
+		User   string `json:"user"`
+	} `json:"_id"`
+	Nickname string `json:"nickname"`
+	// TODO: add avatar to member
+	Roles []string `json:"roles"`
+}
+
+type message struct {
+	ID        string `json:"_id"`
+	AuthorID  string `json:"author"`
+	ChannelID string `json:"channel"`
+	Content   string `json:"content"`
+}
+
 type Message struct {
 	ID        string `json:"_id"`
 	AuthorID  string `json:"author"`
 	ChannelID string `json:"channel"`
 	Content   string `json:"content"`
+
+	c *Client
+}
+
+type serverMembers struct {
+	Members []*Member
+	Users   []*User
 }
 
 func newAuthenticate(token string) authenticate {
