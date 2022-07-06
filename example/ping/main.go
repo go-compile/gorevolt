@@ -23,6 +23,11 @@ func main() {
 	})
 
 	client.Register(func(c *gorevolt.Client, m *gorevolt.Message) {
+		// ignore self
+		if m.AuthorID == c.User.ID {
+			return
+		}
+
 		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
 
 		author, err := m.Author()
@@ -32,8 +37,7 @@ func main() {
 
 		fmt.Println(author.Username)
 
-		// close and finish test
-		// close <- struct{}{}
+		fmt.Println(c.SendMessage(m.ChannelID, "Hello "+author.Username))
 	})
 
 	if err := client.Connect(); err != nil {

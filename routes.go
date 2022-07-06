@@ -1,7 +1,9 @@
 package gorevolt
 
 import (
+	"encoding/hex"
 	"io"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -9,14 +11,10 @@ import (
 	"github.com/valyala/fasttemplate"
 )
 
-type Route struct {
-	route     string
-	ratelimit int
-}
-
 const (
-	RouteUsersMe       = "/users/@me"
-	RouteServerMembers = "/servers/{0}/members"
+	RouteUsersMe         = "/users/@me"
+	RouteServerMembers   = "/servers/{0}/members"
+	RouteChannelMessages = "/channels/{0}/messages"
 )
 
 // newRoute takes in a existing route then inputs the params to the URL
@@ -40,7 +38,13 @@ func (c *Client) request(method, path string, body io.Reader) (*http.Response, e
 		return nil, err
 	}
 
+	nonce, err := newNonce()
+	if err != nil {
+		return nil, err
+	}
+
 	r.Header.Set("x-bot-token", c.token)
+	r.Header.Set("Idempotency-Key", nonce)
 
 	resp, err := c.http.Do(r)
 	if err != nil {
@@ -48,4 +52,14 @@ func (c *Client) request(method, path string, body io.Reader) (*http.Response, e
 	}
 
 	return resp, nil
+}
+
+func newNonce() (string, error) {
+	// TODO: make a faster unique ID/nonce generator
+	buf := make([]byte, 16)
+	if _, err := rand.Read(buf); err != nil {
+		return "", nil
+	}
+
+	return hex.EncodeToString(buf), nil
 }

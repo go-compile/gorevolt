@@ -96,6 +96,34 @@ type Message struct {
 	c *Client
 }
 
+// newMessage is different to message as it has additional options to masquerade
+type newMessage struct {
+	Content     string      `json:"content"`
+	Attachments []string    `json:"attachments"`
+	Replies     []Reply     `json:"replies"`
+	Embed       []Embed     `json:"embeds"`
+	Masquerade  *Masquerade `json:"masquerade"`
+}
+
+type Reply struct {
+	ID      string `json:"id"`
+	Mention bool   `json:"mention"`
+}
+
+type Embed struct {
+	IconURL     string `json:"icon_url"`
+	URL         string `json:"url"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Media       string `json:"media"`
+	Colour      string `json:"colour"`
+}
+
+type Masquerade struct {
+	Name   string `json:"name"`
+	Avatar string `json:"avatar"`
+}
+
 type serverMembers struct {
 	Members []*Member
 	Users   []*User
