@@ -1,5 +1,7 @@
 package gorevolt
 
+var pingBuf = []byte(`{"type":"Ping","data":0}`)
+
 type responseHeader struct {
 	Type string `json:"type"`
 }
@@ -86,9 +88,9 @@ type message struct {
 type Message struct {
 	ID        string   `json:"_id"`
 	AuthorID  string   `json:"author"`
-	ChannelID string   `json:"channel"`
-	ServerID  string   `json:"--1"`
-	Channel   *Channel `json:"--2"`
+	ChannelID string   `json:"channel_id"`
+	ServerID  string   `json:"server_id"`
+	Channel   *Channel `json:"channel"`
 	Content   string   `json:"content"`
 
 	c *Client

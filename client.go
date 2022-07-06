@@ -15,6 +15,8 @@ import (
 const (
 	RevoltAPI       = "https://api.revolt.chat"
 	RevoltWebsocket = "wss://ws.revolt.chat"
+
+	pingInterval = 15 * time.Second
 )
 
 var (
@@ -35,6 +37,9 @@ type Client struct {
 
 	handlers
 	ws *websocket.Conn
+	// wsM mutex for writing to the websocket
+	wsM     sync.Mutex
+	wsClose <-chan struct{}
 
 	User  *User
 	cache Cache
@@ -126,6 +131,7 @@ func (c *Client) Connect() error {
 
 	// go handle events
 	go c.eventLoop(conn)
+	go c.pingLoop(conn)
 
 	return nil
 }
@@ -218,6 +224,23 @@ func (c *Client) eventLoop(conn *websocket.Conn) {
 		}
 
 		c.parseEvents(buf, eventHeader)
+
+	}
+}
+
+func (c *Client) pingLoop(conn *websocket.Conn) {
+	t := time.NewTicker(pingInterval)
+
+	for {
+		select {
+		case <-t.C:
+			c.wsM.Lock()
+			// pingBuf is precomputed for optimum performance
+			conn.WriteMessage(1, pingBuf)
+			c.wsM.Unlock()
+		case <-c.wsClose:
+			t.Stop()
+		}
 	}
 }
 
