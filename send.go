@@ -3,22 +3,21 @@ package gorevolt
 import (
 	"bytes"
 	"errors"
-	"fmt"
-	"io"
 
 	jsoniter "github.com/json-iterator/go"
 )
 
 func (c *Client) SendMessage(channel, content string) (*Message, error) {
 
-	_, err := sendMessage(c, channel, &newMessage{
+	m, err := sendMessage(c, channel, &newMessage{
 		Content: content,
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	return m, nil
 }
 
 func sendMessage(c *Client, channel string, msg *newMessage) (*Message, error) {
@@ -34,17 +33,14 @@ func sendMessage(c *Client, channel string, msg *newMessage) (*Message, error) {
 	}
 	defer r.Body.Close()
 
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Println(r.StatusCode)
-	fmt.Println(string(body))
-
 	if r.StatusCode < 200 || r.StatusCode >= 300 {
 		return nil, errors.New("could not send message")
 	}
 
-	return nil, nil
+	var m message
+	if err := jsoniter.NewDecoder(r.Body).Decode(&m); err != nil {
+		return nil, err
+	}
+
+	return c.convertMessage(&m), nil
 }

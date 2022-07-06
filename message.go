@@ -5,7 +5,14 @@ import (
 )
 
 func (c *Client) handleMessage(msg *message) {
+	m := c.convertMessage(msg)
 
+	for i := range c.handlers.message {
+		c.handlers.message[i](c, m)
+	}
+}
+
+func (c *Client) convertMessage(msg *message) *Message {
 	m := &Message{
 		ID:        msg.ID,
 		AuthorID:  msg.AuthorID,
@@ -21,9 +28,7 @@ func (c *Client) handleMessage(msg *message) {
 		m.ServerID = channel.ServerID
 	}
 
-	for i := range c.handlers.message {
-		c.handlers.message[i](c, m)
-	}
+	return m
 }
 
 func (m *Message) Author() (*User, error) {
