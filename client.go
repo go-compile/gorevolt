@@ -77,6 +77,13 @@ func (c *Client) Register(handler interface{}) {
 	}
 }
 
+// SetCache allows you to use custom caching layers.
+// Solutions such as hash maps, Redis or even disk
+// caches are possible.
+func (c *Client) SetCache(cache Cache) {
+	c.cache = cache
+}
+
 // UnregisterHandlers will reset all handlers and require
 // new ones to be set.
 func (c *Client) UnregisterHandlers() {
