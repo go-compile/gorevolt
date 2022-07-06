@@ -10,16 +10,45 @@ type authenticate struct {
 }
 
 type Ready struct {
-	Users   []*User   `json:"users"`
-	Servers []*Server `json:"servers"`
-	// Channels []User   `json:"channels"`
+	Users    []*User    `json:"users"`
+	Servers  []*Server  `json:"servers"`
+	Channels []*Channel `json:"channels"`
 }
 
 type Server struct {
-	ID          string `json:"_id"`
-	OwnerID     string `json:"owner"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	ID                 string          `json:"_id"`
+	OwnerID            string          `json:"owner"`
+	Name               string          `json:"name"`
+	Description        string          `json:"description"`
+	Channels           []string        `json:"channels"`
+	Categories         []Category      `json:"categories"`
+	Roles              map[string]Role `json:"roles"`
+	DefaultPermissions int64           `json:"default_permissions"`
+}
+
+type Channel struct {
+	ID            string `json:"_id"`
+	ChannelType   string `json:"channel_type"`
+	ServerID      string `json:"server"`
+	Name          string `json:"name"`
+	LastMessageID string `json:"last_message_id"`
+}
+
+type Category struct {
+	ID       string   `json:"id"`
+	Title    string   `json:"title"`
+	Channels []string `json:"channels"`
+}
+
+type Role struct {
+	Name        string      `json:"name"`
+	Permissions Permissions `json:"permissions"`
+	Rank        int         `json:"rank"`
+}
+
+type Permissions struct {
+	A int `json:"a"`
+	D int `json:"d"`
 }
 
 type User struct {

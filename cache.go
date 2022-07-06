@@ -7,15 +7,20 @@ type Cache interface {
 	PutUser(user *User)
 	GetServer(id string) *Server
 	PutServer(server *Server)
+	GetChannel(id string) *Channel
+	PutChannel(channel *Channel)
 }
+
+const avgChannelsPerServer = 10
 
 // ArrayCache uses a array to store users, servers etc.
 //
 // Results in a reduced memory footprint but slower
 // performance.
 type ArrayCache struct {
-	users   []*User
-	servers []*Server
+	users    []*User
+	servers  []*Server
+	channels []*Channel
 
 	m sync.RWMutex
 }
@@ -26,8 +31,9 @@ type ArrayCache struct {
 // performance. It is better to be over generous than conservative.
 func NewArrayCache(usersHint, serversHint int) Cache {
 	return &ArrayCache{
-		users:   make([]*User, 0, usersHint),
-		servers: make([]*Server, 0, serversHint),
+		users:    make([]*User, 0, usersHint),
+		servers:  make([]*Server, 0, serversHint),
+		channels: make([]*Channel, 0, serversHint*avgChannelsPerServer),
 	}
 }
 
@@ -89,4 +95,35 @@ func (c *ArrayCache) PutServer(s *Server) {
 	}
 
 	c.servers = append(c.servers, s)
+}
+
+func (c *ArrayCache) GetChannel(id string) *Channel {
+	c.m.RLock()
+	defer c.m.RUnlock()
+
+	return c.getChannel(id)
+}
+
+func (c *ArrayCache) getChannel(id string) *Channel {
+
+	for i := 0; i < len(c.channels); i++ {
+		if c.channels[i].ID == id {
+			return c.channels[i]
+		}
+	}
+
+	return nil
+}
+
+func (c *ArrayCache) PutChannel(channel *Channel) {
+	c.m.Lock()
+	defer c.m.Unlock()
+
+	if chan1 := c.getChannel(channel.ID); chan1 != nil {
+		// overwrite existing user
+		chan1 = channel
+		return
+	}
+
+	c.channels = append(c.channels, channel)
 }

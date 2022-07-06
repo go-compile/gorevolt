@@ -161,13 +161,21 @@ func (c *Client) prepare(conn *websocket.Conn) error {
 	}
 
 	fmt.Println(event)
-	for i, u := range event.Users {
+	for i := range event.Users {
 		// First user is the current user
 		if i == 0 {
-			c.User = u
+			c.User = event.Users[i]
 		}
 
-		c.cache.PutUser(u)
+		c.cache.PutUser(event.Users[i])
+	}
+
+	for i := range event.Servers {
+		c.cache.PutServer(event.Servers[i])
+	}
+
+	for i := range event.Channels {
+		c.cache.PutChannel(event.Channels[i])
 	}
 
 	// Execute ready handler
