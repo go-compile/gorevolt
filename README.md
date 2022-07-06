@@ -1,3 +1,15 @@
 # GoRevolt (Revolt.chat API Library)
 
-GoRevolt is a [revolt.chat](https://revolt.chat) API library allowing you to write fast and large scale bots in Go.
+GoRevolt is a [revolt.chat](https://revolt.chat) API library allowing you to write fast and large scale bots in Go. Optimized for high performance and stability.
+
+![Revolt.chat image](https://github.com/revoltchat/.github/raw/master/screenshots/2022-03.png)
+
+## Under Active Development
+Please come back after a stable release.
+
+## Road Map
+1. Implement all end points for [Delta](https://developers.revolt.chat/stack/delta/permissions).
+2. Implement all event handlers for [Bonfire](https://developers.revolt.chat/stack/bonfire/events).
+3. Fast customisable caching layer.
+4. Fast data rich API for building bots.
+5. Reply filter (await user response in channel, no prefix required).
