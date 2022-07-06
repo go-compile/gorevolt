@@ -89,7 +89,7 @@ func (c *ArrayCache) PutServer(s *Server) {
 	defer c.m.Unlock()
 
 	if server := c.getServer(s.ID); server != nil {
-		// overwrite existing user
+		// overwrite existing server
 		server = s
 		return
 	}
@@ -120,7 +120,7 @@ func (c *ArrayCache) PutChannel(channel *Channel) {
 	defer c.m.Unlock()
 
 	if chan1 := c.getChannel(channel.ID); chan1 != nil {
-		// overwrite existing user
+		// overwrite existing channel
 		chan1 = channel
 		return
 	}
