@@ -1,9 +1,9 @@
 package gorevolt
 
 import (
+	"crypto/rand"
 	"encoding/hex"
 	"io"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
