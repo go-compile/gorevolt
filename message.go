@@ -2,6 +2,7 @@ package gorevolt
 
 import (
 	"errors"
+	"fmt"
 )
 
 func (c *Client) handleMessage(msg *message) {
@@ -49,9 +50,20 @@ func (m *Message) Server() *Server {
 	return nil
 }
 
+// Reply will send a message within the same channel with that message as the
+// reply.
 func (m *Message) Reply(content string) (*Message, error) {
 	return sendMessage(m.c, m.ChannelID, &newMessage{
 		Content: content,
+		Replies: []Reply{{m.ID, true}},
+	})
+}
+
+// Replyf is much like Message.Reply() however you can format your strings
+// just like fmt.Printf()
+func (m *Message) Replyf(format string, a ...interface{}) (*Message, error) {
+	return sendMessage(m.c, m.ChannelID, &newMessage{
+		Content: fmt.Sprintf(format, a...),
 		Replies: []Reply{{m.ID, true}},
 	})
 }
