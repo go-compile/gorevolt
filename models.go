@@ -10,8 +10,8 @@ type authenticate struct {
 }
 
 type Ready struct {
-	Users   []User   `json:"users"`
-	Servers []Server `json:"servers"`
+	Users   []*User   `json:"users"`
+	Servers []*Server `json:"servers"`
 	// Channels []User   `json:"channels"`
 }
 

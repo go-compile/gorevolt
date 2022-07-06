@@ -17,8 +17,8 @@ func TestAuthenticate(t *testing.T) {
 
 	client := gorevolt.New(token)
 
-	client.Register(func(startup time.Duration) {
-		fmt.Printf("[CONNECTED]")
+	client.Register(func(c *gorevolt.Client, startup time.Duration) {
+		fmt.Printf("[CONNECTED] [USER: %s]\n", c.User.Username)
 	})
 
 	if err := client.Connect(); err != nil {

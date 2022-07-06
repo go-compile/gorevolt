@@ -36,6 +36,9 @@ type Client struct {
 	handlers
 	ws *websocket.Conn
 
+	User  *User
+	cache Cache
+
 	m sync.RWMutex
 }
 
@@ -43,7 +46,7 @@ type handlers struct {
 	ready []HandlerReady
 }
 
-type HandlerReady func(startup time.Duration)
+type HandlerReady func(c *Client, startup time.Duration)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -67,7 +70,7 @@ func (c *Client) Register(handler interface{}) {
 	defer c.m.Unlock()
 
 	switch h := handler.(type) {
-	case func(startup time.Duration):
+	case func(*Client, time.Duration):
 		c.handlers.ready = append(c.handlers.ready, h)
 	default:
 		panic("unknown handler")
@@ -91,6 +94,10 @@ func (c *Client) Close() error {
 // Connect will establish a connection to the websocket server and
 // authenticate your credentials
 func (c *Client) Connect() error {
+	if c.cache == nil {
+		c.cache = NewArrayCache(300, 20)
+	}
+
 	conn, _, err := websocket.DefaultDialer.Dial(c.websocket, nil)
 	if err != nil {
 		return err
@@ -154,10 +161,18 @@ func (c *Client) prepare(conn *websocket.Conn) error {
 	}
 
 	fmt.Println(event)
+	for i, u := range event.Users {
+		// First user is the current user
+		if i == 0 {
+			c.User = u
+		}
+
+		c.cache.PutUser(u)
+	}
 
 	// Execute ready handler
 	for _, handler := range c.handlers.ready {
-		go handler(time.Since(c.created))
+		go handler(c, time.Since(c.created))
 	}
 
 	return nil
