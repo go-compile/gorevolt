@@ -13,3 +13,12 @@ Please come back after a stable release.
 3. Fast customisable caching layer.
 4. Fast data rich API for building bots.
 5. Reply filter (await user response in channel, no prefix required).
+
+## Robust & Stable
+Written with concurrency in mind. Built in unit tests ensure the library is operating as expected.
+
+
+```sh
+go test -v ./...
+```
+> Run the unit tests your self by using the command above.
