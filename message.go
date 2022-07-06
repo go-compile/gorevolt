@@ -26,3 +26,12 @@ func (m *Message) Author() (*User, error) {
 
 	return nil, errors.New("could not fetch author")
 }
+
+func (m *Message) Channel() (*Channel, error) {
+	channel := m.c.cache.GetChannel(m.ChannelID)
+	if channel != nil {
+		return channel, nil
+	}
+
+	return nil, errors.New("could not fetch channel")
+}

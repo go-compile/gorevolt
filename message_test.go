@@ -33,6 +33,13 @@ func TestMessageHandler(t *testing.T) {
 
 		fmt.Println(author.Username)
 
+		channel, err := m.Channel()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		fmt.Println(channel.Name)
+
 		// close and finish test
 		close <- struct{}{}
 	})
