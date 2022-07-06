@@ -16,16 +16,19 @@ func TestAuthenticate(t *testing.T) {
 	}
 
 	client := gorevolt.New(token)
+	close := make(chan struct{})
 
 	client.Register(func(c *gorevolt.Client, startup time.Duration) {
 		fmt.Printf("[CONNECTED] [USER: %s]\n", c.User.Username)
+
+		// close and finish test
+		close <- struct{}{}
 	})
 
 	if err := client.Connect(); err != nil {
 		t.Fatal(err)
 	}
 
-	time.Sleep(time.Minute)
-
+	<-close
 	client.Close()
 }
