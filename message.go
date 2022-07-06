@@ -48,3 +48,10 @@ func (m *Message) Server() *Server {
 
 	return nil
 }
+
+func (m *Message) Reply(content string) (*Message, error) {
+	return sendMessage(m.c, m.ChannelID, &newMessage{
+		Content: content,
+		Replies: []Reply{{m.ID, true}},
+	})
+}

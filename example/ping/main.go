@@ -35,9 +35,7 @@ func main() {
 			log.Println(err)
 		}
 
-		fmt.Println(author.Username)
-
-		fmt.Println(c.SendMessage(m.ChannelID, "Hello "+author.Username))
+		m.Reply("Hello there " + author.Username)
 	})
 
 	if err := client.Connect(); err != nil {
