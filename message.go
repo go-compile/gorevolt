@@ -1,6 +1,8 @@
 package gorevolt
 
-import "errors"
+import (
+	"errors"
+)
 
 func (c *Client) handleMessage(msg *message) {
 
@@ -11,6 +13,12 @@ func (c *Client) handleMessage(msg *message) {
 		Content:   msg.Content,
 
 		c: c,
+	}
+
+	channel := m.c.cache.GetChannel(m.ChannelID)
+	if channel != nil {
+		m.Channel = channel
+		m.ServerID = channel.ServerID
 	}
 
 	for i := range c.handlers.message {
@@ -27,11 +35,11 @@ func (m *Message) Author() (*User, error) {
 	return nil, errors.New("could not fetch author")
 }
 
-func (m *Message) Channel() (*Channel, error) {
-	channel := m.c.cache.GetChannel(m.ChannelID)
-	if channel != nil {
-		return channel, nil
+func (m *Message) Server() *Server {
+	s := m.c.cache.GetServer(m.ServerID)
+	if s != nil {
+		return s
 	}
 
-	return nil, errors.New("could not fetch channel")
+	return nil
 }

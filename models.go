@@ -84,10 +84,12 @@ type message struct {
 }
 
 type Message struct {
-	ID        string `json:"_id"`
-	AuthorID  string `json:"author"`
-	ChannelID string `json:"channel"`
-	Content   string `json:"content"`
+	ID        string   `json:"_id"`
+	AuthorID  string   `json:"author"`
+	ChannelID string   `json:"channel"`
+	ServerID  string   `json:"--1"`
+	Channel   *Channel `json:"--2"`
+	Content   string   `json:"content"`
 
 	c *Client
 }

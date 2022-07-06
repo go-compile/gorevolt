@@ -24,7 +24,7 @@ func TestMessageHandler(t *testing.T) {
 	close := make(chan struct{})
 
 	client.Register(func(c *gorevolt.Client, m *gorevolt.Message) {
-		fmt.Printf("[NEW MESSAGE] [USER: %s] %q\n", m.AuthorID, m.Content)
+		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
 
 		author, err := m.Author()
 		if err != nil {
@@ -32,13 +32,6 @@ func TestMessageHandler(t *testing.T) {
 		}
 
 		fmt.Println(author.Username)
-
-		channel, err := m.Channel()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		fmt.Println(channel.Name)
 
 		// close and finish test
 		close <- struct{}{}
