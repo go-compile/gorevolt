@@ -30,6 +30,12 @@ type Server struct {
 	DefaultPermissions int64           `json:"default_permissions"`
 }
 
+type ServerCreate struct {
+	ID       string    `json:"_id"`
+	Server   Server    `json:"server"`
+	Channels []Channel `json:"channels"`
+}
+
 type Channel struct {
 	ID                 string                 `json:"_id"`
 	ChannelType        string                 `json:"channel_type"`
