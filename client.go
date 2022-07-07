@@ -48,13 +48,14 @@ type Client struct {
 }
 
 type handlers struct {
-	ready   []HandlerReady
-	message []HandlerMessage
+	ready         []HandlerReady
+	message       []HandlerMessage
+	messageUpdate []HandlerMessageUpdate
 }
 
 type HandlerReady func(c *Client, startup time.Duration)
 type HandlerMessage func(c *Client, m *Message)
-type HandlerMessageUpdate func(c *Client, m *Message)
+type HandlerMessageUpdate func(c *Client, m *UpdatedMessage)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -77,6 +78,11 @@ func (c *Client) OnReady(h HandlerReady) {
 // OnMessage registers a onMessage event handler
 func (c *Client) OnMessage(h HandlerMessage) {
 	c.handlers.message = append(c.handlers.message, h)
+}
+
+// OnMessage registers a onMessageUpdate event handler
+func (c *Client) OnMessageUpdate(h HandlerMessageUpdate) {
+	c.handlers.messageUpdate = append(c.handlers.messageUpdate, h)
 }
 
 // SetCache allows you to use custom caching layers.
@@ -253,6 +259,15 @@ func (c *Client) parseEvents(buf []byte, header responseHeader) {
 		}
 
 		c.handleMessage(&msg)
+	case "MessageUpdate":
+		var msg MessageUpdate
+		err := jsoniter.Unmarshal(buf, &msg)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		c.handleUpdatedMessage(&msg)
 	}
 
 	fmt.Println(string(buf))

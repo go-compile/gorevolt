@@ -33,6 +33,11 @@ func main() {
 		m.Reply("Hello there " + m.Author.Username)
 	})
 
+	client.OnMessageUpdate(func(c *gorevolt.Client, m *gorevolt.UpdatedMessage) {
+		fmt.Println("Message updated:", m.Edited.Day())
+		fmt.Println("Message:", m.Content)
+	})
+
 	if err := client.Connect(); err != nil {
 		log.Fatal(err)
 	}

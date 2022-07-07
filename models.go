@@ -1,5 +1,7 @@
 package gorevolt
 
+import "time"
+
 var pingBuf = []byte(`{"type":"Ping","data":0}`)
 
 type responseHeader struct {
@@ -78,11 +80,34 @@ type Member struct {
 	Roles []string `json:"roles"`
 }
 
+type UpdatedMessage struct {
+	ID        string    `json:"id"`
+	ChannelID string    `json:"channel_id"`
+	ServerID  string    `json:"server_id"`
+	Channel   *Channel  `json:"channel"`
+	Content   string    `json:"content"`
+	Edited    time.Time `json:"edited"`
+	Changes   []string  `json:"changes"`
+}
+
+type MessageUpdate struct {
+	ID      string                 `json:"id"`
+	Channel string                 `json:"channel"`
+	Data    map[string]interface{} `json:"data"`
+}
+
+type UpdatedChannel struct {
+	ID    string   `json:"id"`
+	Data  Channel  `json:"data"`
+	Clear []string `json:"clear"`
+}
+
 type message struct {
 	ID        string `json:"_id"`
 	AuthorID  string `json:"author"`
 	ChannelID string `json:"channel"`
 	Content   string `json:"content"`
+	Edited    string `json:"edited"`
 }
 
 type Message struct {

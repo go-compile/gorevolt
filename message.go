@@ -2,6 +2,7 @@ package gorevolt
 
 import (
 	"fmt"
+	"time"
 )
 
 func (c *Client) handleMessage(msg *message) {
@@ -10,6 +11,34 @@ func (c *Client) handleMessage(msg *message) {
 	for i := range c.handlers.message {
 		c.handlers.message[i](c, m)
 	}
+}
+
+func (c *Client) handleUpdatedMessage(msg *MessageUpdate) {
+	m := &UpdatedMessage{
+		ID:        msg.ID,
+		ChannelID: msg.Channel,
+		Changes:   []string{},
+	}
+
+	content, ok := msg.Data["content"].(string)
+	if ok {
+		m.Content = content
+		m.Changes = append(m.Changes, "content")
+	}
+
+	edited, ok := msg.Data["edited"].(string)
+	if ok {
+		m.Changes = append(m.Changes, "edited")
+		stamp, err := time.Parse(time.RFC3339, edited)
+		if err == nil {
+			m.Edited = stamp
+		}
+	}
+
+	for i := range c.handlers.messageUpdate {
+		c.handlers.messageUpdate[i](c, m)
+	}
+
 }
 
 // convertMessage takes a raw message received from the API or websocket
