@@ -24,7 +24,7 @@ type Server struct {
 	OwnerID            string          `json:"owner"`
 	Name               string          `json:"name"`
 	Description        string          `json:"description"`
-	Channels           []string        `json:"channels"`
+	ChannelIDs         []string        `json:"channels"`
 	Categories         []Category      `json:"categories"`
 	Roles              map[string]Role `json:"roles"`
 	DefaultPermissions int64           `json:"default_permissions"`

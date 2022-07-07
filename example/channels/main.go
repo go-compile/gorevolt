@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/go-compile/gorevolt"
@@ -30,6 +31,15 @@ func main() {
 
 		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
 		m.Reply("Hello there " + m.Channel.Name)
+
+		if m.Content == "channels" {
+			msg := make([]string, 0)
+			for _, channel := range m.Server().Channels(c) {
+				msg = append(msg, channel.Name+" - "+channel.Description)
+			}
+
+			m.Reply(strings.Join(msg, "\n"))
+		}
 	})
 
 	client.OnMessageUpdate(func(c *gorevolt.Client, m *gorevolt.UpdatedMessage) {

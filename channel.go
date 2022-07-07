@@ -65,3 +65,12 @@ func updateChannel(c *Client, update *channelUpdate) {
 		go handler(c, old, &current)
 	}
 }
+
+// Channels returns the channels which belong to this server
+func (s *Server) Channels(c *Client) (channels []*Channel) {
+	for i := 0; i < len(s.ChannelIDs); i++ {
+		channels = append(channels, c.cache.GetChannel(s.ChannelIDs[i]))
+	}
+
+	return channels
+}
