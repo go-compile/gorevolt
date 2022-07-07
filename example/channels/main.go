@@ -29,12 +29,16 @@ func main() {
 		}
 
 		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
-		m.Reply("Hello there " + m.Author.Username)
+		m.Reply("Hello there " + m.Channel.Name)
 	})
 
 	client.OnMessageUpdate(func(c *gorevolt.Client, m *gorevolt.UpdatedMessage) {
 		fmt.Println("Message updated:", m.Edited.Day())
 		fmt.Println("Message:", m.Content)
+	})
+
+	client.OnChannelCreate(func(c *gorevolt.Client, channel *gorevolt.Channel) {
+		fmt.Println("Channel created:", *channel)
 	})
 
 	if err := client.Connect(); err != nil {

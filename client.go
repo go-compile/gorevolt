@@ -51,11 +51,13 @@ type handlers struct {
 	ready         []HandlerReady
 	message       []HandlerMessage
 	messageUpdate []HandlerMessageUpdate
+	channelCreate []HandlerChannelCreate
 }
 
 type HandlerReady func(c *Client, startup time.Duration)
 type HandlerMessage func(c *Client, m *Message)
 type HandlerMessageUpdate func(c *Client, m *UpdatedMessage)
+type HandlerChannelCreate func(c *Client, channel *Channel)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -83,6 +85,11 @@ func (c *Client) OnMessage(h HandlerMessage) {
 // OnMessage registers a onMessageUpdate event handler
 func (c *Client) OnMessageUpdate(h HandlerMessageUpdate) {
 	c.handlers.messageUpdate = append(c.handlers.messageUpdate, h)
+}
+
+// OnChannelCreate registers a channel create event handler
+func (c *Client) OnChannelCreate(h HandlerChannelCreate) {
+	c.handlers.channelCreate = append(c.handlers.channelCreate, h)
 }
 
 // SetCache allows you to use custom caching layers.
@@ -268,7 +275,21 @@ func (c *Client) parseEvents(buf []byte, header responseHeader) {
 		}
 
 		c.handleUpdatedMessage(&msg)
-	}
+	case "ChannelCreate":
+		var channel Channel
+		err := jsoniter.Unmarshal(buf, &channel)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
-	fmt.Println(string(buf))
+		c.cache.PutChannel(&channel)
+
+		// Execute on channel create handler
+		for _, handler := range c.handlers.channelCreate {
+			go handler(c, &channel)
+		}
+	default:
+		fmt.Println(string(buf))
+	}
 }

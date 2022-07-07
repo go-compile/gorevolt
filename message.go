@@ -20,6 +20,7 @@ func (c *Client) handleUpdatedMessage(msg *MessageUpdate) {
 		Changes:   []string{},
 	}
 
+	// TODO: add embed support
 	content, ok := msg.Data["content"].(string)
 	if ok {
 		m.Content = content
