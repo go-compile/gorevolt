@@ -1,6 +1,6 @@
 # GoRevolt (Revolt.chat API Library)
 
-GoRevolt is a [revolt.chat](https://revolt.chat) API library allowing you to write fast and large scale bots in Go. Optimized for high performance and stability.
+GoRevolt is a [revolt.chat](https://revolt.chat) API library allowing you to write fast and large scale bots in Go. Optimized for high performance and stability. Discord.js devs will right at home with this Revolt.chat library.
 
 ![Revolt.chat image](https://github.com/revoltchat/.github/raw/master/screenshots/2022-03.png)
 
