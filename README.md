@@ -26,12 +26,12 @@ go test -v ./...
 ## Events
 List of currently implemented events. More to come soon.
 
-- [ x ] OnReady
-- [ x ] OnMessage
-- [ x ] OnMessageUpdate
+- [x] OnReady
+- [x] OnMessage
+- [x] OnMessageUpdate
 - [ ] OnMessageAppend
 - [ ] OnMessageDelete
-- [ x ] OnChannelCreate
+- [x] OnChannelCreate
 - [ ] OnChannelUpdate
 - [ ] OnChannelDelete
 - [ ] OnChannelGroupJoin
