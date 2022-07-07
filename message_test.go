@@ -23,7 +23,7 @@ func TestMessageHandler(t *testing.T) {
 	client := gorevolt.New(token)
 	close := make(chan struct{})
 
-	client.Register(func(c *gorevolt.Client, m *gorevolt.Message) {
+	client.OnMessage(func(c *gorevolt.Client, m *gorevolt.Message) {
 		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
 
 		fmt.Println(m.Author.Username)

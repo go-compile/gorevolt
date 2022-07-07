@@ -18,7 +18,7 @@ func TestAuthenticate(t *testing.T) {
 	client := gorevolt.New(token)
 	close := make(chan struct{})
 
-	client.Register(func(c *gorevolt.Client, startup time.Duration) {
+	client.OnReady(func(c *gorevolt.Client, startup time.Duration) {
 		fmt.Printf("[CONNECTED] [USER: %s]\n", c.User.Username)
 
 		// close and finish test

@@ -18,11 +18,11 @@ func main() {
 	client := gorevolt.New(token)
 	close := make(chan struct{})
 
-	client.Register(func(c *gorevolt.Client, startup time.Duration) {
+	client.OnReady(func(c *gorevolt.Client, startup time.Duration) {
 		fmt.Printf("[CONNECTED] [USER: %s]\n", c.User.Username)
 	})
 
-	client.Register(func(c *gorevolt.Client, m *gorevolt.Message) {
+	client.OnMessage(func(c *gorevolt.Client, m *gorevolt.Message) {
 		// ignore self
 		if m.AuthorID == c.User.ID {
 			return

@@ -54,6 +54,7 @@ type handlers struct {
 
 type HandlerReady func(c *Client, startup time.Duration)
 type HandlerMessage func(c *Client, m *Message)
+type HandlerMessageUpdate func(c *Client, m *Message)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -68,22 +69,14 @@ func New(token string) *Client {
 	return c
 }
 
-// Register will setup a listener for your handler.
-//
-// Multiple handlers can be registered for the same event and
-// be called concurrently.
-func (c *Client) Register(handler interface{}) {
-	c.m.Lock()
-	defer c.m.Unlock()
+// OnReady registers a ready event handler
+func (c *Client) OnReady(h HandlerReady) {
+	c.handlers.ready = append(c.handlers.ready, h)
+}
 
-	switch h := handler.(type) {
-	case func(*Client, time.Duration):
-		c.handlers.ready = append(c.handlers.ready, h)
-	case func(*Client, *Message):
-		c.handlers.message = append(c.handlers.message, h)
-	default:
-		panic("unknown handler")
-	}
+// OnMessage registers a onMessage event handler
+func (c *Client) OnMessage(h HandlerMessage) {
+	c.handlers.message = append(c.handlers.message, h)
 }
 
 // SetCache allows you to use custom caching layers.
