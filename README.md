@@ -22,3 +22,33 @@ Written with concurrency in mind. Built in unit tests ensure the library is oper
 go test -v ./...
 ```
 > Run the unit tests your self by using the command above.
+
+## Events
+List of currently implemented events. More to come soon.
+
+- [ x ] OnReady
+- [ x ] OnMessage
+- [ x ] OnMessageUpdate
+- [ ] OnMessageAppend
+- [ ] OnMessageDelete
+- [ x ] OnChannelCreate
+- [ ] OnChannelUpdate
+- [ ] OnChannelDelete
+- [ ] OnChannelGroupJoin
+- [ ] OnChannelGroupLeave
+- [ ] OnChannelStartTyping
+- [ ] OnChannelStopTyping
+- [ ] OnChannelAck
+- [ ] OnServerCreate
+- [ ] OnServerUpdate
+- [ ] OnServerDelete
+- [ ] OnServerMemberUpdate
+- [ ] OnServerMemberJoin
+- [ ] OnServerMemberLeave
+- [ ] OnServerRoleUpdate
+- [ ] OnServerRoleDelete
+- [ ] OnUserUpdate
+- [ ] OnUserRelationship
+- [ ] OnUserRelationship
+- [ ] OnEmojiCreate
+- [ ] OnEmojiDelete
