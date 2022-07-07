@@ -30,12 +30,7 @@ func main() {
 
 		fmt.Printf("[NEW MESSAGE] [USER: %s] [SERVER: %s] [CHANNEL: %s] %q\n", m.AuthorID, m.Server().Name, m.Channel.Name, m.Content)
 
-		author, err := m.Author()
-		if err != nil {
-			log.Println(err)
-		}
-
-		m.Reply("Hello there " + author.Username)
+		m.Reply("Hello there " + m.Author.Username)
 	})
 
 	if err := client.Connect(); err != nil {

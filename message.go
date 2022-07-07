@@ -1,7 +1,6 @@
 package gorevolt
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -31,16 +30,12 @@ func (c *Client) convertMessage(msg *message) *Message {
 		m.ServerID = channel.ServerID
 	}
 
-	return m
-}
-
-func (m *Message) Author() (*User, error) {
-	user := m.c.cache.GetUser(m.AuthorID)
-	if user != nil {
-		return user, nil
+	author := m.c.cache.GetUser(m.AuthorID)
+	if author != nil {
+		m.Author = author
 	}
 
-	return nil, errors.New("could not fetch author")
+	return m
 }
 
 func (m *Message) Server() *Server {
