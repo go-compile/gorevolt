@@ -43,6 +43,10 @@ func main() {
 		channel.SendMessagef(c, "Welcome to the new channel %s within %s.", channel.Name, channel.Server(c).Name)
 	})
 
+	client.OnChannelUpdate(func(c *gorevolt.Client, old, new *gorevolt.Channel) {
+		new.SendMessagef(c, "Channel updated. Name: %s, Description: %s. \nOld name: %s", new.Name, new.Description, old.Name)
+	})
+
 	if err := client.Connect(); err != nil {
 		log.Fatal(err)
 	}

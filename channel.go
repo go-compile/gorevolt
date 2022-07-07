@@ -21,3 +21,47 @@ func (channel *Channel) SendMessagef(c *Client, format string, a ...interface{})
 		Content: fmt.Sprintf(format, a...),
 	})
 }
+
+func updateChannel(c *Client, update *channelUpdate) {
+
+	old := c.cache.GetChannel(update.ID)
+	if old == nil {
+		// TODO: fetch channel and populate cache
+		return
+	}
+
+	// clone channel
+	current := *old
+
+	for i := 0; i < len(update.Clear); i++ {
+		switch update.Clear[i] {
+		case "Icon":
+			// TODO: channel updated icons
+		case "Description":
+			current.Description = ""
+		}
+	}
+
+	// update changed fields
+	for k, v := range update.Data {
+		switch k {
+		case "name":
+			current.Name = v.(string)
+		case "description":
+			current.Description = v.(string)
+		case "nfsw":
+			current.NFSW = v.(bool)
+		case "channel_type":
+			current.ChannelType = v.(string)
+		case "default_permissions":
+			current.DefaultPermissions = v.(Permissions)
+		case "role_permissions":
+			current.RolePermissions = v.(map[string]Permissions)
+		}
+	}
+
+	// Execute on channel updated handler
+	for _, handler := range c.handlers.channelUpdate {
+		go handler(c, old, &current)
+	}
+}

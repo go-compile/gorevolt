@@ -31,11 +31,15 @@ type Server struct {
 }
 
 type Channel struct {
-	ID            string `json:"_id"`
-	ChannelType   string `json:"channel_type"`
-	ServerID      string `json:"server"`
-	Name          string `json:"name"`
-	LastMessageID string `json:"last_message_id"`
+	ID                 string                 `json:"_id"`
+	ChannelType        string                 `json:"channel_type"`
+	ServerID           string                 `json:"server"`
+	Name               string                 `json:"name"`
+	Description        string                 `json:"description"`
+	NFSW               bool                   `json:"nsfw"`
+	DefaultPermissions Permissions            `json:"default_permissions"`
+	RolePermissions    map[string]Permissions `json:"role_permissions"`
+	LastMessageID      string                 `json:"last_message_id"`
 }
 
 type Category struct {
@@ -100,6 +104,12 @@ type UpdatedChannel struct {
 	ID    string   `json:"id"`
 	Data  Channel  `json:"data"`
 	Clear []string `json:"clear"`
+}
+
+type channelUpdate struct {
+	ID    string                 `json:"id"`
+	Data  map[string]interface{} `json:"data"`
+	Clear []string               `json:"clear"`
 }
 
 type message struct {
