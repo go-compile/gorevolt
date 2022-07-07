@@ -38,7 +38,9 @@ func main() {
 	})
 
 	client.OnChannelCreate(func(c *gorevolt.Client, channel *gorevolt.Channel) {
-		fmt.Println("Channel created:", *channel)
+		fmt.Printf("\nNew channel created [%s] in [%s]\n\n", channel.Name, channel.Server(c).Name)
+
+		channel.SendMessagef(c, "Welcome to the new channel %s within %s.", channel.Name, channel.Server(c).Name)
 	})
 
 	if err := client.Connect(); err != nil {
