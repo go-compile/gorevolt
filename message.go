@@ -13,6 +13,8 @@ func (c *Client) handleMessage(msg *message) {
 	}
 }
 
+// convertMessage takes a raw message received from the API or websocket
+// and converts it to a user facing Message
 func (c *Client) convertMessage(msg *message) *Message {
 	m := &Message{
 		ID:        msg.ID,
