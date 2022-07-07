@@ -340,7 +340,11 @@ func (c *Client) parseEvents(buf []byte, header responseHeader) {
 			return
 		}
 
-		// c.cache.PutServer(&server)
+		c.cache.PutServer(&response.Server)
+
+		for i := range response.Channels {
+			c.cache.PutChannel(&response.Channels[i])
+		}
 
 		// Execute onServerCreate handlers
 		for _, handler := range c.handlers.serverCreate {
