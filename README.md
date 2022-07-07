@@ -32,8 +32,8 @@ List of currently implemented events. More to come soon.
 - [ ] OnMessageAppend
 - [ ] OnMessageDelete
 - [x] OnChannelCreate
-- [ ] OnChannelUpdate
-- [ ] OnChannelDelete
+- [x] OnChannelUpdate
+- [x] OnChannelDelete
 - [ ] OnChannelGroupJoin
 - [ ] OnChannelGroupLeave
 - [ ] OnChannelStartTyping

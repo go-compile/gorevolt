@@ -47,6 +47,10 @@ func main() {
 		new.SendMessagef(c, "Channel updated. Name: %s, Description: %s. \nOld name: %s", new.Name, new.Description, old.Name)
 	})
 
+	client.OnChannelDelete(func(c *gorevolt.Client, channel *gorevolt.Channel) {
+		fmt.Printf("Channel %q deleted.\n", channel.Name)
+	})
+
 	if err := client.Connect(); err != nil {
 		log.Fatal(err)
 	}
