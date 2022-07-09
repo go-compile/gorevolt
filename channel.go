@@ -54,7 +54,7 @@ func updateChannel(c *Client, update *channelUpdate) {
 		case "channel_type":
 			current.ChannelType = v.(string)
 		case "default_permissions":
-			current.DefaultPermissions = v.(Permissions)
+			current.DefaultPermissions = interfacesToPermissions(v)
 		case "role_permissions":
 			current.RolePermissions = v.(map[string]Permissions)
 		}
@@ -155,4 +155,13 @@ func interfacesToCategory(a []interface{}) []Category {
 	}
 
 	return output
+}
+
+func interfacesToPermissions(a interface{}) Permissions {
+	p := a.(map[string]interface{})
+
+	return Permissions{
+		A: int(p["a"].(float64)),
+		D: int(p["d"].(float64)),
+	}
 }
