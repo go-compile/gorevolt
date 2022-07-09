@@ -20,6 +20,7 @@ type Ready struct {
 }
 
 type Server struct {
+	// TODO: add icon & banner
 	ID                 string          `json:"_id"`
 	OwnerID            string          `json:"owner"`
 	Name               string          `json:"name"`
@@ -113,6 +114,12 @@ type UpdatedChannel struct {
 }
 
 type channelUpdate struct {
+	ID    string                 `json:"id"`
+	Data  map[string]interface{} `json:"data"`
+	Clear []string               `json:"clear"`
+}
+
+type serverUpdate struct {
 	ID    string                 `json:"id"`
 	Data  map[string]interface{} `json:"data"`
 	Clear []string               `json:"clear"`

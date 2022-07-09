@@ -40,7 +40,7 @@ List of currently implemented events. More to come soon.
 - [ ] OnChannelStopTyping
 - [ ] OnChannelAck
 - [x] OnServerCreate
-- [ ] OnServerUpdate
+- [x] OnServerUpdate
 - [ ] OnServerDelete
 - [ ] OnServerMemberUpdate
 - [ ] OnServerMemberJoin

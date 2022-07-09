@@ -60,6 +60,8 @@ func updateChannel(c *Client, update *channelUpdate) {
 		}
 	}
 
+	c.cache.PutChannel(&current)
+
 	// Execute on channel updated handler
 	for _, handler := range c.handlers.channelUpdate {
 		go handler(c, old, &current)
@@ -73,4 +75,84 @@ func (s *Server) Channels(c *Client) (channels []*Channel) {
 	}
 
 	return channels
+}
+
+func updateServer(c *Client, update *serverUpdate) {
+
+	old := c.cache.GetServer(update.ID)
+	if old == nil {
+		// TODO: fetch server and populate cache
+		return
+	}
+
+	// clone server
+	current := *old
+
+	for i := 0; i < len(update.Clear); i++ {
+		switch update.Clear[i] {
+		case "Icon":
+			// TODO: server updated icons
+		case "Description":
+			current.Description = ""
+		case "Banner":
+			// TODO: clear server banner
+		}
+	}
+
+	// update changed fields
+	for k, v := range update.Data {
+		switch k {
+		case "name":
+			current.Name = v.(string)
+		case "description":
+			current.Description = v.(string)
+		case "owner":
+			current.OwnerID = v.(string)
+		case "channels":
+			current.ChannelIDs = interfacesToStrings(v.([]interface{}))
+		case "default_permissions":
+			current.DefaultPermissions = v.(int64)
+		case "roles":
+			current.Roles = v.(map[string]Role)
+		case "categories":
+			current.Categories = interfacesToCategory(v.([]interface{}))
+		}
+	}
+
+	c.cache.PutServer(&current)
+
+	// Execute on channel updated handler
+	for _, handler := range c.handlers.serverUpdate {
+		go handler(c, old, &current)
+	}
+}
+
+func interfacesToStrings(a []interface{}) []string {
+	output := make([]string, len(a))
+
+	for i := 0; i < len(a); i++ {
+		output[i] = a[i].(string)
+	}
+
+	return output
+}
+
+func interfacesToCategory(a []interface{}) []Category {
+	output := make([]Category, len(a))
+
+	// preallocate a category map
+	x := make(map[string]interface{}, 3)
+	for i := 0; i < len(a); i++ {
+		// cast type to map
+		x = a[i].(map[string]interface{})
+
+		// cast and place values into category
+		output[i] = Category{
+			ID:       x["id"].(string),
+			Channels: interfacesToStrings(x["channels"].([]interface{})),
+			Title:    x["title"].(string),
+		}
+	}
+
+	return output
 }

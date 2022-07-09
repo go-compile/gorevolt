@@ -26,6 +26,19 @@ func main() {
 		fmt.Printf("Server created/joined: %s\n", server.Name)
 	})
 
+	client.OnServerUpdate(func(c *gorevolt.Client, old, new *gorevolt.Server) {
+
+		m := fmt.Sprintf("| Name        | %.20s | %.20s |\n", old.Name, new.Name)
+		m += fmt.Sprintf("| Description | %.20s | %.20s |\n", old.Description, new.Description)
+		m += fmt.Sprintf("| Channels    | %20.d | %20.d |\n", len(old.ChannelIDs), len(new.ChannelIDs))
+		m += fmt.Sprintf("| Categories  | %20.d | %20.d |\n", len(old.Categories), len(new.Categories))
+		fmt.Printf("Server %q updated.\n\n%s", old.Name, m)
+
+		fmt.Println(old.Categories)
+		fmt.Println(new.Categories)
+
+	})
+
 	if err := client.Connect(); err != nil {
 		log.Fatal(err)
 	}

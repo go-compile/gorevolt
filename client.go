@@ -55,6 +55,7 @@ type handlers struct {
 	channelUpdate []HandlerChannelUpdate
 	channelDelete []HandlerChannelDelete
 	serverCreate  []HandlerServerCreate
+	serverUpdate  []HandlerServerUpdate
 }
 
 type HandlerReady func(c *Client, startup time.Duration)
@@ -64,6 +65,7 @@ type HandlerChannelCreate func(c *Client, channel *Channel)
 type HandlerChannelUpdate func(c *Client, old *Channel, new *Channel)
 type HandlerChannelDelete func(c *Client, channel *Channel)
 type HandlerServerCreate func(c *Client, server *Server)
+type HandlerServerUpdate func(c *Client, old, new *Server)
 
 // New creates a new client but does not authenticate yet
 func New(token string) *Client {
@@ -111,6 +113,11 @@ func (c *Client) OnChannelDelete(h HandlerChannelDelete) {
 // OnServerCreate registers a server create event handler
 func (c *Client) OnServerCreate(h HandlerServerCreate) {
 	c.handlers.serverCreate = append(c.handlers.serverCreate, h)
+}
+
+// OnServerCreate registers a server update event handler
+func (c *Client) OnServerUpdate(h HandlerServerUpdate) {
+	c.handlers.serverUpdate = append(c.handlers.serverUpdate, h)
 }
 
 // SetCache allows you to use custom caching layers.
@@ -350,6 +357,16 @@ func (c *Client) parseEvents(buf []byte, header responseHeader) {
 		for _, handler := range c.handlers.serverCreate {
 			go handler(c, &response.Server)
 		}
+	case "ServerUpdate":
+		var server serverUpdate
+		err := jsoniter.Unmarshal(buf, &server)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		fmt.Println(string(buf))
+		updateServer(c, &server)
 	default:
 		fmt.Println(string(buf))
 	}
