@@ -13,6 +13,7 @@ import (
 
 const (
 	RouteUsersMe         = "/users/@me"
+	RouteUsers           = "/users/{0}"
 	RouteServerMembers   = "/servers/{0}/members"
 	RouteChannelMessages = "/channels/{0}/messages"
 )

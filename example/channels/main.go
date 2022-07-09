@@ -38,7 +38,9 @@ func main() {
 				msg = append(msg, channel.Name+" - "+channel.Description)
 			}
 
-			m.Reply(strings.Join(msg, "\n"))
+			if _, err := m.Reply(strings.Join(msg, "\n")); err != nil {
+				log.Println("Error:", err)
+			}
 		}
 	})
 

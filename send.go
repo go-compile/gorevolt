@@ -2,7 +2,6 @@ package gorevolt
 
 import (
 	"bytes"
-	"errors"
 
 	jsoniter "github.com/json-iterator/go"
 )
@@ -34,7 +33,7 @@ func sendMessage(c *Client, channel string, msg *newMessage) (*Message, error) {
 	defer r.Body.Close()
 
 	if r.StatusCode < 200 || r.StatusCode >= 300 {
-		return nil, errors.New("could not send message")
+		return nil, parseStatus(r.StatusCode)
 	}
 
 	var m message
