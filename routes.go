@@ -16,6 +16,7 @@ const (
 	RouteUsers           = "/users/{0}"
 	RouteServerMembers   = "/servers/{0}/members"
 	RouteChannelMessages = "/channels/{0}/messages"
+	RouteChannel         = "/channels/{0}"
 )
 
 // newRoute takes in a existing route then inputs the params to the URL

@@ -2,6 +2,8 @@ package gorevolt
 
 import (
 	"errors"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 var (
@@ -28,4 +30,23 @@ func parseStatus(status int) error {
 	}
 
 	return ErrUnknown
+}
+
+func GetChannel(c *Client, id string) (*Channel, error) {
+	r, err := c.request("GET", newRoute(RouteChannel, id), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode < 200 || r.StatusCode >= 300 {
+		return nil, parseStatus(r.StatusCode)
+	}
+
+	var m Channel
+	if err := jsoniter.NewDecoder(r.Body).Decode(&m); err != nil {
+		return nil, err
+	}
+
+	return &m, nil
 }
