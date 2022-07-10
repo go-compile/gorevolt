@@ -50,3 +50,22 @@ func GetChannel(c *Client, id string) (*Channel, error) {
 
 	return &m, nil
 }
+
+func GetUser(c *Client, id string) (*User, error) {
+	r, err := c.request("GET", newRoute(RouteUsers, id), nil)
+	if err != nil {
+		return nil, err
+	}
+	defer r.Body.Close()
+
+	if r.StatusCode < 200 || r.StatusCode >= 300 {
+		return nil, parseStatus(r.StatusCode)
+	}
+
+	var m User
+	if err := jsoniter.NewDecoder(r.Body).Decode(&m); err != nil {
+		return nil, err
+	}
+
+	return &m, nil
+}
