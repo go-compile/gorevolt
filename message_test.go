@@ -14,9 +14,9 @@ func TestMessageHandler(t *testing.T) {
 		t.Skip("no token provided in `gorevolt_test_token` environment variable")
 	}
 
-	interactiveTests, _ := os.LookupEnv("gorevolt_test_message_handler")
+	interactiveTests, _ := os.LookupEnv("gorevolt_test_interactive")
 	if interactiveTests != "true" {
-		t.Skip("`gorevolt_test_message_handler` environment variable needs to be set to true to test onMessage")
+		t.Skip("`gorevolt_test_interactive` environment variable needs to be set to true")
 
 	}
 
