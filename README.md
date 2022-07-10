@@ -18,6 +18,21 @@ Please come back after a stable release.
 Written with concurrency in mind. Built in unit tests ensure the library is operating as expected.
 
 
+API tests require these environment variables to be set.
+```sh
+gorevolt_test_token=
+gorevolt_test_channel=
+# User should be the ID of the bot user and the username should be "GoRevolt"
+gorevolt_test_user=
+```
+> Non interactive tests environment variables
+
+```
+gorevolt_test_interactive=true
+```
+> Interactive websockets tests
+
+
 ```sh
 go test -v ./...
 ```
